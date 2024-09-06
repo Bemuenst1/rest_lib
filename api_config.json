@@ -1,0 +1,17 @@
+{
+    "api_keys": ["123456", "abcdef"],
+    "routes": [
+        {
+            "path": "/hello",
+            "methods": ["GET"],
+            "func": "hello",
+            "params": ["name"]
+        },
+        {
+            "path": "/goodbye",
+            "methods": ["GET"],
+            "func": "goodbye",
+            "params": ["name"]
+        }
+    ]
+}
