@@ -1,15 +1,15 @@
 import json
 
-from rest import API
+from rest import API, route
 from threading import Thread
 
 class Handler:
-    @staticmethod
-    def hello(name):
+    @route("/hello", ["GET"], ["name"])
+    def hello(self, name):
         return {"message": f"Hello, {name}!"}
     
-    @staticmethod
-    def goodbye(name):
+    @route("/goodbye", ["GET"], ["name"])
+    def goodbye(self, name):
         return {"message": f"Goodbye, {name}!"}
 
 def load_config():

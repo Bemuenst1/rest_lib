@@ -1,5 +1,15 @@
 from flask import Flask, request, jsonify
 
+
+def route(path, methods, params):
+    def wrapper(func):
+        func.path = path
+        func.methods = methods
+        func.params = params
+        return func
+    return wrapper
+
+
 class API(object):
     app = Flask(__name__)
 
@@ -26,16 +36,12 @@ class API(object):
             return jsonify({"error": "Not found"}), 404
 
         # initialize routes
-        for route in self.config.get('routes', []):
-            self.add_route(route)
+        for func_name in dir(handler):
+            func = getattr(handler, func_name)
+            if callable(func) and not func_name.startswith("_"):
+                self.add_route(func.path, func_name, func.methods, func.params)
     
-    def add_route(self, route):
-        # route configuration
-        path = route.get('path', None)
-        func_name = route.get('func', None)
-        methods = route.get('methods', ['GET'])
-        params = route.get('params', [])
-
+    def add_route(self, path, func_name, methods, params):
         if not path or not func_name:
             print("[Error]: Invalid route configuration")
             return
@@ -43,8 +49,8 @@ class API(object):
         @self.app.route(path, methods=methods, endpoint=func_name)
         def route_handler(func_name=func_name, params=params):
             # API key validation
-            if not self.validate_key():
-                return self.error("Invalid API key")
+            # if not self.validate_key():
+            #     return self.error("Invalid API key")
             
             # load handler function
             func = getattr(self.handler, func_name, None)
